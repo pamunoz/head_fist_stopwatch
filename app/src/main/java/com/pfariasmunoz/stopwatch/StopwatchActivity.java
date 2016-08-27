@@ -10,6 +10,7 @@ public class StopwatchActivity extends Activity {
 
     private int seconds = 0;
     private boolean running;
+    private boolean wasRunning;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +19,7 @@ public class StopwatchActivity extends Activity {
         if (savedInstanceState != null) {
             seconds = savedInstanceState.getInt("seconds");
             running = savedInstanceState.getBoolean("running");
+            wasRunning = savedInstanceState.getBoolean("wasRunning");
         }
         runTimer();
     }
@@ -53,9 +55,6 @@ public class StopwatchActivity extends Activity {
                 if (running) {
                     seconds++;
                 }
-                //System.out.println("hours = seconds / 3600: " + hours + " = " + seconds + " / 3600");
-                System.out.println("(seconds % 3600) / 60 # " + minutes + " = (" + seconds + " % 3600) / 60 ");
-                System.out.println("(seconds % 3600): " + (seconds % 3600));
                 handler.postDelayed(this, 1000);
             }
         });
@@ -66,5 +65,21 @@ public class StopwatchActivity extends Activity {
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putInt("seconds", seconds);
         savedInstanceState.putBoolean("running", running);
+        savedInstanceState.putBoolean("wasRunning", wasRunning);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        wasRunning = running;
+        running = false;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (wasRunning) {
+            running = true;
+        }
     }
 }
